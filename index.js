@@ -9,6 +9,7 @@ var Inactive   = require('pull-inactivity')
 function isFunction (f) { return 'function' === typeof f }
 
 function isString (s) { return 'string' === typeof s }
+function isObject (o) { return o && 'object' === typeof o && !Array.isArray(o) }
 
 function each(obj, iter) {
   if(Array.isArray(obj)) return obj.forEach(iter)
@@ -42,6 +43,16 @@ function coearseAddress (address) {
       )
     }
   return address
+}
+
+
+function isPermsList(list) {
+  return (null == list) || ( Array.isArray(list) && list.every(isString) )
+}
+
+function isPermissions (perms) {
+  //allow: null means enable everything.
+  return perms && isObject(perms) && isPermsList(perms.allow) && isPermsList(perms.deny)
 }
 
 //opts must have appKey
@@ -124,7 +135,7 @@ module.exports = function (opts) {
       server.listen(port)
 
       function setupRPC (stream, manf, isClient) {
-        var rpc = Muxrpc(create.manifest, manf || create.manifest)(api, stream.auth)
+        var rpc = Muxrpc(create.manifest, manf || create.manifest)(api, isClient ? create.permissions.anonymous : isPermissions(stream.auth) ? stream.auth : create.permissions.anonymous)
         var timeout = opts.timeout == null ? defaultTimeout : opts.timeout
         var rpcStream = rpc.createStream()
         if(timeout > 0) rpcStream = Inactive(rpcStream, opts.timeout)
