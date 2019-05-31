@@ -12,7 +12,7 @@
     "hoox": "0.0.1",
     "ip": "^1.1.5",
     "map-merge": "^1.1.0",
-    "multiserver": "github:ssbc/multiserver#multi-meta",
+    "multiserver": "^3.3.6",
     "muxrpc": "^6.4.0",
     "non-private-ip": "^1.4.3",
     "pull-inactivity": "~2.1.1",
